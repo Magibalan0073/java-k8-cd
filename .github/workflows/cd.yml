@@ -3,7 +3,7 @@ name: CD Pipeline
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [deploy]
+    types: [deploy-app]
 
 permissions:
   contents: write
