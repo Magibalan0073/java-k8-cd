@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: java-demo
-        image: jpalaparthi/bmw-k8s-java-demo:v0.0.1
+        image: magibalan07/spring-boot-crud-postgres-adminer:1
         ports:
         - containerPort: 8080
         env:
