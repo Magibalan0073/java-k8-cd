@@ -1,6 +1,7 @@
-name: Kubernetes CD
+name: CD Pipeline
 
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [deploy]
 
@@ -8,44 +9,24 @@ permissions:
   contents: write
 
 jobs:
-  deploy:
+  update-manifest:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Update Deployment Image Version
+      - name: Update Image Version
         run: |
           sed -i "s|image: .*|image: magibalan07/spring-boot-crud-postgres-adminer:${{ github.event.client_payload.image_tag }}|g" 05-java-deployment.yaml
 
-      - name: Commit Deployment Changes
+      - name: Commit Changes
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
           git add 05-java-deployment.yaml
 
-          git commit -m "Deploy version ${{ github.event.client_payload.image_tag }}" || true
+          git commit -m "Update image to ${{ github.event.client_payload.image_tag }}" || true
 
           git push
-
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v4
-
-      - name: Configure kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
-
-      - name: Verify Kubernetes Cluster
-        run: |
-          kubectl get nodes
-
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -k .
-
-      - name: Verify Deployment Rollout
-        run: |
-          kubectl rollout status deployment/java-demo-app -n java-demo
