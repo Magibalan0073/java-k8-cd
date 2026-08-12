@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: java-demo
-        image: magibalan07/spring-boot-crud-postgres-adminer:
+        image: magibalan07/spring-boot-crud-postgres-adminer:9718ebd12e10991dd94cacb003527383094acd6e
         ports:
         - containerPort: 8080
         env:
